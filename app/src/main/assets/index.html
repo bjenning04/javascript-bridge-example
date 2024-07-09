@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <input type="button" value="Say hello" onclick="showAndroidToast('Hello Android!')"/>
+    <input type="button" value="Show identifier" onclick="showIdentifier()"/>
+    <p id="identifier">test</p>
+    <ol id="stuff"></ol>
+    <script type="text/javascript">
+        function showAndroidToast(toast) {
+            Android.showToast(toast);
+        }
+
+        function showIdentifier() {
+            document.getElementById("identifier").innerHTML = Android.getIdentifier();
+        }
+
+        function addStuff(stuff) {
+            const node = document.createElement("li");
+            const textnode = document.createTextNode(stuff);
+            node.appendChild(textnode);
+            document.getElementById("stuff").appendChild(node);
+        }
+    </script>
+</body>
+</html>
