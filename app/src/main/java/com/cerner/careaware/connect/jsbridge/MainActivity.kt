@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
 import android.util.Base64
+import android.util.Log
 import android.view.ViewGroup
+import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +28,8 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
+
+private val TAG = MainActivity::class.simpleName
 
 class MainActivity : ComponentActivity() {
 
@@ -56,9 +61,19 @@ fun MainView(modifier: Modifier = Modifier, executor: ScheduledExecutorService =
             }
         },
         update = {
+            val url = "file:///android_asset/index.html"
             it.settings.javaScriptEnabled = true
             it.addJavascriptInterface(WebAppInterface(it.context), "Android")
-            it.loadUrl("file:///android_asset/index.html")
+            it.loadUrl(url)
+            it.webViewClient = object : WebViewClient() {
+
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    Log.d(TAG, "$url")
+                    val cookies = CookieManager.getInstance().getCookie(url);
+                    Log.d(TAG, "All cookies in a string: $cookies")
+                }
+            }
 
             executor.scheduleWithFixedDelay({
                 Handler(it.context.mainLooper).post { it.loadUrl("javascript:addStuff('${System.currentTimeMillis()}')") }
