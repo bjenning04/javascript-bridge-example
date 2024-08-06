@@ -60,6 +60,6 @@ android {
         xmlReport false
         htmlReport true
         lintConfig file("$project.rootDir/config/quality/lint/lint.xml")
-        htmlOutput file("$layout.buildDirectory/reports/lint-report.html")
+        htmlOutput file("${layout.buildDirectory.get()}/reports/lint-report.html")
     }
 }

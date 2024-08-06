@@ -31,8 +31,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.edit
 import com.cerner.careaware.connect.jsbridge.ui.theme.CPOBedsideTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -60,33 +59,22 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("SetJavaScriptEnabled", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainView(modifier: Modifier = Modifier) {
-    val bluetoothPermissionState = rememberPermissionState(permission = Manifest.permission.BLUETOOTH)
-    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
-    val internetPermissionState = rememberPermissionState(permission = Manifest.permission.INTERNET)
-    val modifyAudioSettingsPermissionState = rememberPermissionState(permission = Manifest.permission.MODIFY_AUDIO_SETTINGS)
-    val recordAudioPermissionState = rememberPermissionState(permission = Manifest.permission.RECORD_AUDIO)
+    val permissionState =
+        rememberMultiplePermissionsState(
+            listOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.CAMERA,
+                Manifest.permission.INTERNET,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                Manifest.permission.RECORD_AUDIO,
+            ),
+        )
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-    if (!bluetoothPermissionState.status.isGranted) {
+    if (!permissionState.allPermissionsGranted) {
         LaunchedEffect(Unit) {
-            bluetoothPermissionState.launchPermissionRequest()
-        }
-    } else if (!cameraPermissionState.status.isGranted) {
-        LaunchedEffect(Unit) {
-            cameraPermissionState.launchPermissionRequest()
-        }
-    } else if (!internetPermissionState.status.isGranted) {
-        LaunchedEffect(Unit) {
-            internetPermissionState.launchPermissionRequest()
-        }
-    } else if (!modifyAudioSettingsPermissionState.status.isGranted) {
-        LaunchedEffect(Unit) {
-            modifyAudioSettingsPermissionState.launchPermissionRequest()
-        }
-    } else if (!recordAudioPermissionState.status.isGranted) {
-        LaunchedEffect(Unit) {
-            recordAudioPermissionState.launchPermissionRequest()
+            permissionState.launchMultiplePermissionRequest()
         }
     } else {
         Scaffold(modifier = modifier, snackbarHost = {
