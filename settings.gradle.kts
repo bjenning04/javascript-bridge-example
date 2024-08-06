@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "JavaScriptBridgeExample"
-include(":app")
+rootProject.name = "cpo-bedside"
+include(":cpo-bedside")

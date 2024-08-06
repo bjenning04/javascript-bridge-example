@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.cerner.careaware.connect.jsbridge.ui.theme
 
 import androidx.compose.ui.graphics.Color

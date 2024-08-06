@@ -1,0 +1,65 @@
+apply plugin: 'com.diffplug.spotless'
+apply plugin: 'pmd'
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+// Add static analysis, code coverage, and formatting tasks to the check task.
+check.dependsOn 'pmd'
+check.dependsOn 'lint'
+check.dependsOn 'detekt'
+
+spotless {
+    groovyGradle {
+        target '*.gradle'
+        greclipse()
+    }
+    java {
+        target 'src/**/*.java'
+        importOrder()
+        removeUnusedImports()
+        cleanthat()
+        googleJavaFormat()
+    }
+    kotlin {
+        target 'src/**/*.kt'
+        ktlint()
+    }
+    kotlinGradle {
+        target '*.gradle.kts'
+        ktlint()
+    }
+}
+
+detekt {
+    config.setFrom("$project.rootDir/config/quality/detekt/config.yml")
+    buildUponDefaultConfig true
+}
+
+tasks.register('pmd', Pmd) {
+    pmd {
+        toolVersion = "7.3.0"
+        ignoreFailures = false
+        ruleSetFiles = files("$project.rootDir/config/quality/pmd/pmd-ruleset.xml")
+        ruleSets = []
+    }
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.required = false
+        html.required = true
+        html.outputLocation = file("$project.layout.buildDirectory/reports/pmd/pmd.html")
+    }
+}
+
+android {
+    lint {
+        quiet false
+        warningsAsErrors true
+        xmlReport false
+        htmlReport true
+        lintConfig file("$project.rootDir/config/quality/lint/lint.xml")
+        htmlOutput file("$layout.buildDirectory/reports/lint-report.html")
+    }
+}
