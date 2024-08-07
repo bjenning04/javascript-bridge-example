@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
+import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -89,6 +90,8 @@ fun MainView(modifier: Modifier = Modifier) {
                                 ViewGroup.LayoutParams.MATCH_PARENT,
                             )
 
+                        settings.allowContentAccess = true
+                        settings.allowFileAccess = true
                         settings.javaScriptEnabled = true
                         webViewClient =
                             object : WebViewClient() {
@@ -130,6 +133,10 @@ fun MainView(modifier: Modifier = Modifier) {
                                         }
                                     }
                                     return super.onConsoleMessage(consoleMessage)
+                                }
+
+                                override fun onPermissionRequest(request: PermissionRequest?) {
+                                    request?.grant(request.resources)
                                 }
                             }
                     }
