@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-@SuppressLint("SetJavaScriptEnabled", "UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun MainView(modifier: Modifier = Modifier) {
     val permissionState =
